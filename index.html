@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Money Tracker App</title>
+  <style>
+    body { font-family: Arial; background: #f2f6ff; padding: 20px; }
+    h2 { text-align: center; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
+    th { background: #4CAF50; color: white; }
+    input { width: 100%; border: none; text-align: center; }
+    button { padding: 8px 12px; margin: 5px; border: none; background: #2196F3; color: white; cursor: pointer; }
+    .tabs { text-align: center; margin-bottom: 10px; }
+    .sheet { display: none; }
+    .active { display: block; }
+    .total { text-align: right; margin-top: 8px; font-size: 16px; }
+    #loginBox { max-width: 300px; margin: 100px auto; background: white; padding: 20px; text-align: center; }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginBox">
+  <h2>🔐 Login</h2>
+  <input type="password" id="password" placeholder="Enter Password">
+  <br><br>
+  <button onclick="login()">Login</button>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none;">
+  <h2>💰 Money Tracker</h2>
+
+  <div class="tabs">
+    <button onclick="openSheet('s1')">Sheet 1</button>
+    <button onclick="openSheet('s2')">Sheet 2</button>
+    <button onclick="openSheet('s3')">Sheet 3</button>
+  </div>
+
+  <!-- SHEET TEMPLATE -->
+  <div id="s1" class="sheet active">
+    <table id="t1">
+      <tr><th>Date</th><th>Description</th><th>Money In</th><th>Money Out</th></tr>
+    </table>
+    <button onclick="addRow('t1','in1','out1')">➕ Add Row</button>
+    <div class="total">In: ₹ <span id="in1">0</span> | Out: ₹ <span id="out1">0</span></div>
+  </div>
+
+  <div id="s2" class="sheet">
+    <table id="t2">
+      <tr><th>Date</th><th>Description</th><th>Money In</th><th>Money Out</th></tr>
+    </table>
+    <button onclick="addRow('t2','in2','out2')">➕ Add Row</button>
+    <div class="total">In: ₹ <span id="in2">0</span> | Out: ₹ <span id="out2">0</span></div>
+  </div>
+
+  <div id="s3" class="sheet">
+    <table id="t3">
+      <tr><th>Date</th><th>Description</th><th>Money In</th><th>Money Out</th></tr>
+    </table>
+    <button onclick="addRow('t3','in3','out3')">➕ Add Row</button>
+    <div class="total">In: ₹ <span id="in3">0</span> | Out: ₹ <span id="out3">0</span></div>
+  </div>
+</div>
+
+<script>
+const APP_PASSWORD = "1234"; // 👈 CHANGE PASSWORD HERE
+
+function login() {
+  if (document.getElementById("password").value === APP_PASSWORD) {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("app").style.display = "block";
+  } else {
+    alert("Wrong Password");
+  }
+}
+
+function openSheet(id) {
+  document.querySelectorAll(".sheet").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function addRow(tableId, inId, outId) {
+  let table = document.getElementById(tableId);
+  let row = table.insertRow();
+
+  for (let i = 0; i < 4; i++) {
+    let cell = row.insertCell();
+    let input = document.createElement("input");
+    input.type = (i === 2 || i === 3) ? "number" : "text";
+    input.oninput = () => calc(tableId, inId, outId);
+    cell.appendChild(input);
+  }
+}
+
+function calc(tableId, inId, outId) {
+  let tin = 0, tout = 0;
+  let table = document.getElementById(tableId);
+
+  for (let i = 1; i < table.rows.length; i++) {
+    tin += Number(table.rows[i].cells[2].children[0].value) || 0;
+    tout += Number(table.rows[i].cells[3].children[0].value) || 0;
+  }
+  document.getElementById(inId).innerText = tin;
+  document.getElementById(outId).innerText = tout;
+}
+</script>
+
+</body>
+</html>
